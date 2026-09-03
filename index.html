@@ -166,9 +166,38 @@
   .work-row h3{font-family:'Noto Kufi Arabic'; font-weight:700; font-size:1.4rem; flex:1;}
   .work-row p{color:var(--ink-dim); font-size:0.95rem; max-width:320px; font-weight:300;}
 
+  /* ---------- projects ---------- */
+  .project-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:2px;}
+  .project-card{
+    background:var(--bg); border:1px solid var(--line); text-decoration:none; color:var(--ink);
+    display:flex; flex-direction:column; position:relative; overflow:hidden;
+    transition:transform .3s ease, background .3s ease;
+  }
+  .project-card:hover{transform:translateY(-6px); background:#0c0d11;}
+  .project-visual{
+    aspect-ratio:16/10; position:relative; overflow:hidden;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(0,87,194,0.35), transparent 60%),
+      radial-gradient(circle at 75% 75%, rgba(200,16,46,0.25), transparent 60%),
+      var(--bg-panel);
+    border-bottom:1px solid var(--line);
+  }
+  .project-card.red .project-visual{
+    background:
+      radial-gradient(circle at 30% 30%, rgba(200,16,46,0.35), transparent 60%),
+      radial-gradient(circle at 75% 75%, rgba(0,87,194,0.25), transparent 60%),
+      var(--bg-panel);
+  }
+  .project-body{padding:26px 28px 30px;}
+  .project-body .pname{font-weight:700; font-size:1.2rem; margin-bottom:10px;}
+  .project-body .pdesc{color:var(--ink-dim); font-size:0.92rem; font-weight:300;}
+
   /* ---------- channels ---------- */
   .channels{background:var(--bg-panel); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
-  .channel-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:2px;}
+  .channel-group{margin-bottom:40px;}
+  .channel-group:last-child{margin-bottom:0;}
+  .group-label{font-size:0.85rem; letter-spacing:2px; color:var(--ink-dim); margin-bottom:16px;}
+  .channel-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:2px;}
   .channel-card{
     background:var(--bg); padding:34px 28px; text-decoration:none; color:var(--ink);
     display:flex; flex-direction:column; gap:20px; position:relative; overflow:hidden;
@@ -219,6 +248,7 @@
   <ul>
     <li><a href="#about">عني</a></li>
     <li><a href="#work">شغلي</a></li>
+    <li><a href="#projects">مشاريعي</a></li>
     <li><a href="#channels">قنواتي</a></li>
     <li><a href="#contact">تواصل</a></li>
   </ul>
@@ -228,10 +258,10 @@
   <div class="orb orb-blue"></div>
   <div class="orb orb-red"></div>
   <div class="beam"></div>
-  <div class="hero-eyebrow">مرحباً، أنا</div>
+  <div class="hero-eyebrow">أهلاً، أنا</div>
   <h1 class="kufi">ياسين محمد</h1>
   <div class="en-name anton">YASSIN&nbsp;&nbsp;MOHAMED</div>
-  <p class="tag">[هنا هيتكتب وصف قصير وقوي عن مجالك الأساسي وإيه اللي بتقدمه — هيتحط بعد ما تبعتلي التفاصيل]</p>
+  <p class="tag">أحوّل الأفكار إلى مشاريع رقمية حقيقية، من المواقع والتصميم والمحتوى إلى تجارب الألعاب والسيرفرات.</p>
   <div class="hero-cta">
     <a href="#channels" class="btn btn-solid">شوف قنواتي</a>
     <a href="#contact" class="btn btn-outline">تواصل معايا</a>
@@ -248,14 +278,14 @@
     <p>الخلفية والتخصصات اللي بشتغل فيها.</p>
   </div>
   <div class="about-grid">
-    <p class="lede reveal">[هنا هتتحط فقرة قوية عنك <span class="fade">— مسيرتك، خبرتك، وإيه اللي بيميزك عن غيرك في مجالك، مكتوبة بأسلوب واثق ومباشر]</span></p>
+    <p class="lede reveal">أنا ياسين محمد، صانع محتوى ومصمم ومطور ومهتم بالتكنولوجيا. <span class="fade">بدأت بصناعة المحتوى والتقنية، ومع الوقت توسعت مهاراتي لأعمل في تصميم وتطوير المواقع، الهوية البصرية، التصميم والفيديو، ومشاريع الألعاب والسيرفرات. أعمل دائمًا على تحويل الأفكار إلى مشاريع حقيقية، وأحب تجربة أشياء جديدة وتعلم مهارات مختلفة تجمع بين الإبداع والتقنية.</span></p>
     <div class="reveal">
       <div class="tags">
-        <span class="tag-pill">[تخصص 1]</span>
-        <span class="tag-pill">[تخصص 2]</span>
-        <span class="tag-pill">[تخصص 3]</span>
-        <span class="tag-pill">[تخصص 4]</span>
-        <span class="tag-pill">[تخصص 5]</span>
+        <span class="tag-pill">Web Development</span>
+        <span class="tag-pill">Graphic Design</span>
+        <span class="tag-pill">Content Creation</span>
+        <span class="tag-pill">Gaming &amp; Servers</span>
+        <span class="tag-pill">Technology</span>
       </div>
     </div>
   </div>
@@ -272,51 +302,132 @@
   <div class="work-list reveal">
     <div class="work-row">
       <span class="n anton">01</span>
-      <h3>[مجال الشغل الأول]</h3>
-      <p>[وصف مختصر لطبيعة الشغل ده]</p>
+      <h3>المواقع والتطوير</h3>
+      <p>تصميم وتطوير مواقع شخصية، مواقع للمشاريع والسيرفرات وتجارب رقمية مخصصة.</p>
     </div>
     <div class="work-row">
       <span class="n anton">02</span>
-      <h3>[مجال الشغل التاني]</h3>
-      <p>[وصف مختصر لطبيعة الشغل ده]</p>
+      <h3>التصميم والهوية</h3>
+      <p>تصميم الهويات البصرية، الجرافيك، الصور، الشعارات والمحتوى البصري.</p>
     </div>
     <div class="work-row">
       <span class="n anton">03</span>
-      <h3>[مجال الشغل التالت]</h3>
-      <p>[وصف مختصر لطبيعة الشغل ده]</p>
+      <h3>صناعة المحتوى</h3>
+      <p>صناعة وتحرير الفيديوهات والمحتوى لمنصات YouTube وTikTok وInstagram.</p>
     </div>
+    <div class="work-row">
+      <span class="n anton">04</span>
+      <h3>Gaming &amp; Servers</h3>
+      <p>إنشاء وتطوير أفكار وتجارب خاصة بسيرفرات الألعاب، خصوصًا Minecraft وFiveM.</p>
+    </div>
+    <div class="work-row">
+      <span class="n anton">05</span>
+      <h3>FiveM</h3>
+      <p>تصميم ملابس وشخصيات وعناصر بصرية مخصصة لسيرفرات FiveM.</p>
+    </div>
+    <div class="work-row">
+      <span class="n anton">06</span>
+      <h3>التقنية والذكاء الاصطناعي</h3>
+      <p>استخدام التكنولوجيا وأدوات الذكاء الاصطناعي لبناء حلول وتجارب رقمية وأفكار جديدة.</p>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="section-head reveal">
+    <div>
+      <span class="num anton">03 — مشاريعي</span>
+      <h2>مشاريع اشتغلت عليها</h2>
+    </div>
+    <p>هيتضاف تفاصيل وصور وروابط لكل مشروع تباعًا.</p>
+  </div>
+  <div class="project-grid reveal">
+    <a href="#" class="project-card">
+      <div class="project-visual"></div>
+      <div class="project-body">
+        <div class="pname kufi">Mine Duty</div>
+        <p class="pdesc">مشروع سيرفر وتجربة Gaming تجمع بين Minecraft والمحتوى الحربي وتجارب البقاء.</p>
+      </div>
+    </a>
+    <a href="#" class="project-card red">
+      <div class="project-visual"></div>
+      <div class="project-body">
+        <div class="pname kufi">Web Projects</div>
+        <p class="pdesc">مجموعة من المواقع التي قمت بتصميمها وتطويرها.</p>
+      </div>
+    </a>
+    <a href="#" class="project-card">
+      <div class="project-visual"></div>
+      <div class="project-body">
+        <div class="pname kufi">FiveM Clothing</div>
+        <p class="pdesc">تصميم ملابس مخصصة لشخصيات FiveM وسيرفرات الألعاب.</p>
+      </div>
+    </a>
+    <a href="#" class="project-card red">
+      <div class="project-visual"></div>
+      <div class="project-body">
+        <div class="pname kufi">Content &amp; Design</div>
+        <p class="pdesc">نماذج من أعمال التصميم والفيديو وصناعة المحتوى.</p>
+      </div>
+    </a>
   </div>
 </section>
 
 <section id="channels" class="channels">
   <div class="section-head reveal">
     <div>
-      <span class="num anton">03 — القنوات</span>
+      <span class="num anton">04 — القنوات</span>
       <h2>لاقيني هنا</h2>
     </div>
-    <p>اللينكات دلوقتي مؤقتة، هتتظبط بعد ما تبعتها.</p>
+    <p>تابعني حسب المجال اللي بيهمك.</p>
   </div>
-  <div class="channel-grid reveal">
-    <a href="#" class="channel-card">
-      <div class="icon-badge"><svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M22 12.5c0-2.3-.2-3.8-.5-4.7-.3-.9-1-1.6-1.9-1.9C18 5.4 12 5.4 12 5.4s-6 0-7.6.5c-.9.3-1.6 1-1.9 1.9C2.2 8.7 2 10.2 2 12.5s.2 3.8.5 4.7c.3.9 1 1.6 1.9 1.9 1.6.5 7.6.5 7.6.5s6 0 7.6-.5c.9-.3 1.6-1 1.9-1.9.3-.9.5-2.4.5-4.7Z"/><path d="M10 9.5l5 3-5 3v-6Z"/></svg></div>
-      <div><div class="cname">يوتيوب</div><div class="chandle">[اسم القناة]</div></div>
-    </a>
-    <a href="#" class="channel-card red">
-      <div class="icon-badge"><svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M9 19a4 4 0 1 0 4-4V3"/><path d="M13 3c.3 2.3 2 4 4.5 4.3"/><path d="M17.5 7.3V11a6 6 0 0 1-4.5-2"/></svg></div>
-      <div><div class="cname">تيك توك</div><div class="chandle">[اسم الحساب]</div></div>
-    </a>
-    <a href="#" class="channel-card">
-      <div class="icon-badge"><svg viewBox="0 0 24 24" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1"/></svg></div>
-      <div><div class="cname">انستجرام</div><div class="chandle">[اسم الحساب]</div></div>
-    </a>
-    <a href="#" class="channel-card red">
-      <div class="icon-badge"><svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M20.3 5.3c-1.3-.6-2.7-1-4.1-1.2l-.2.4c-.5-.1-1.1-.1-1.6 0l-.2-.4c-1.4.2-2.8.6-4.1 1.2C7.6 8.2 6.9 11 7.1 13.8c1.5 1.1 3 1.8 4.4 2.2l.5-1c-.5-.2-1-.4-1.4-.7.1-.1.2-.2.3-.3 2.6 1.2 5.5 1.2 8.1 0l.3.3c-.4.3-.9.5-1.4.7l.5 1c1.4-.4 2.9-1.1 4.4-2.2.3-3.3-.6-6-2.5-8.5Z"/><circle cx="9.5" cy="11" r="1"/><circle cx="14.5" cy="11" r="1"/></svg></div>
-      <div><div class="cname">ديسكورد</div><div class="chandle">[لينك السيرفر]</div></div>
-    </a>
-    <a href="#" class="channel-card">
-      <div class="icon-badge"><svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M21 11.5a8.4 8.4 0 0 1-8.9 8.4 8.5 8.5 0 0 1-4.3-1.1L3 20l1.2-4.8a8.4 8.4 0 0 1-1.2-4.4A8.4 8.4 0 0 1 12.1 2a8.5 8.5 0 0 1 8.9 8.5v1Z"/></svg></div>
-      <div><div class="cname">واتساب</div><div class="chandle">[الرقم]</div></div>
-    </a>
+  <div class="channel-group reveal">
+    <div class="group-label anton">Gaming</div>
+    <div class="channel-grid">
+      <a href="https://youtube.com/@ninja_zone100?si=jpPFz7YGtdeSoH3W" target="_blank" rel="noopener" class="channel-card">
+        <div class="icon-badge"><svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M22 12.5c0-2.3-.2-3.8-.5-4.7-.3-.9-1-1.6-1.9-1.9C18 5.4 12 5.4 12 5.4s-6 0-7.6.5c-.9.3-1.6 1-1.9 1.9C2.2 8.7 2 10.2 2 12.5s.2 3.8.5 4.7c.3.9 1 1.6 1.9 1.9 1.6.5 7.6.5 7.6.5s6 0 7.6-.5c.9-.3 1.6-1 1.9-1.9.3-.9.5-2.4.5-4.7Z"/><path d="M10 9.5l5 3-5 3v-6Z"/></svg></div>
+        <div class="cname">يوتيوب</div>
+      </a>
+      <a href="https://www.tiktok.com/@ninja.zone.100?_r=1&_t=ZS-99QFXKlBEX6" target="_blank" rel="noopener" class="channel-card red">
+        <div class="icon-badge"><svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M9 19a4 4 0 1 0 4-4V3"/><path d="M13 3c.3 2.3 2 4 4.5 4.3"/><path d="M17.5 7.3V11a6 6 0 0 1-4.5-2"/></svg></div>
+        <div class="cname">تيك توك</div>
+      </a>
+    </div>
+  </div>
+  <div class="channel-group reveal">
+    <div class="group-label anton">Technology</div>
+    <div class="channel-grid">
+      <a href="https://youtube.com/@tech_zone100?si=FZ4lI1yR15hPqglN" target="_blank" rel="noopener" class="channel-card">
+        <div class="icon-badge"><svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M22 12.5c0-2.3-.2-3.8-.5-4.7-.3-.9-1-1.6-1.9-1.9C18 5.4 12 5.4 12 5.4s-6 0-7.6.5c-.9.3-1.6 1-1.9 1.9C2.2 8.7 2 10.2 2 12.5s.2 3.8.5 4.7c.3.9 1 1.6 1.9 1.9 1.6.5 7.6.5 7.6.5s6 0 7.6-.5c.9-.3 1.6-1 1.9-1.9.3-.9.5-2.4.5-4.7Z"/><path d="M10 9.5l5 3-5 3v-6Z"/></svg></div>
+        <div class="cname">يوتيوب</div>
+      </a>
+      <a href="https://www.tiktok.com/@tech.zone.100?_r=1&_t=ZS-99QFUEamEiq" target="_blank" rel="noopener" class="channel-card red">
+        <div class="icon-badge"><svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M9 19a4 4 0 1 0 4-4V3"/><path d="M13 3c.3 2.3 2 4 4.5 4.3"/><path d="M17.5 7.3V11a6 6 0 0 1-4.5-2"/></svg></div>
+        <div class="cname">تيك توك</div>
+      </a>
+    </div>
+  </div>
+  <div class="channel-group reveal">
+    <div class="group-label anton">Personal</div>
+    <div class="channel-grid">
+      <a href="https://www.tiktok.com/@yassin.mohamed.2009?_r=1&_t=ZS-99QFN5fQFd7" target="_blank" rel="noopener" class="channel-card">
+        <div class="icon-badge"><svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M9 19a4 4 0 1 0 4-4V3"/><path d="M13 3c.3 2.3 2 4 4.5 4.3"/><path d="M17.5 7.3V11a6 6 0 0 1-4.5-2"/></svg></div>
+        <div class="cname">تيك توك</div>
+      </a>
+      <a href="https://www.instagram.com/yassin.mohamed.2009?igsi=MndsM281NDltdWFq" target="_blank" rel="noopener" class="channel-card red">
+        <div class="icon-badge"><svg viewBox="0 0 24 24" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1"/></svg></div>
+        <div class="cname">انستجرام</div>
+      </a>
+    </div>
+  </div>
+  <div class="channel-group reveal">
+    <div class="group-label anton">Community</div>
+    <div class="channel-grid">
+      <a href="https://discord.com/users/1230975716884086" target="_blank" rel="noopener" class="channel-card">
+        <div class="icon-badge"><svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M20.3 5.3c-1.3-.6-2.7-1-4.1-1.2l-.2.4c-.5-.1-1.1-.1-1.6 0l-.2-.4c-1.4.2-2.8.6-4.1 1.2C7.6 8.2 6.9 11 7.1 13.8c1.5 1.1 3 1.8 4.4 2.2l.5-1c-.5-.2-1-.4-1.4-.7.1-.1.2-.2.3-.3 2.6 1.2 5.5 1.2 8.1 0l.3.3c-.4.3-.9.5-1.4.7l.5 1c1.4-.4 2.9-1.1 4.4-2.2.3-3.3-.6-6-2.5-8.5Z"/><circle cx="9.5" cy="11" r="1"/><circle cx="14.5" cy="11" r="1"/></svg></div>
+        <div class="cname">ديسكورد</div>
+      </a>
+    </div>
   </div>
 </section>
 
@@ -324,13 +435,12 @@
   <div class="orb orb-blue"></div>
   <div class="orb orb-red"></div>
   <h2 class="kufi">يلا نتكلم عن شغلك الجاي</h2>
-  <p>لو عندك فكرة أو مشروع أو عايز تتواصل معايا، ابعتلي على أي قناة من دول.</p>
-  <a href="#" class="btn btn-solid">ابعتلي واتساب</a>
+  <p>لو عندك فكرة أو مشروع أو عايز تتواصل معايا، ابعتلي على أي قناة من دول. سواء كان تعاون، مشروع، أو خدمة — أنا مستعد أسمعها.</p>
+  <a href="https://wa.me/201501094186" target="_blank" rel="noopener" class="btn btn-solid">ابعتلي واتساب</a>
   <div class="contact-links">
-    <a href="#">يوتيوب</a>
-    <a href="#">تيك توك</a>
-    <a href="#">انستجرام</a>
-    <a href="#">ديسكورد</a>
+    <a href="https://www.tiktok.com/@yassin.mohamed.2009?_r=1&_t=ZS-99QFN5fQFd7" target="_blank" rel="noopener">تيك توك</a>
+    <a href="https://www.instagram.com/yassin.mohamed.2009?igsi=MndsM281NDltdWFq" target="_blank" rel="noopener">انستجرام</a>
+    <a href="https://discord.com/users/1230975716884086" target="_blank" rel="noopener">ديسكورد</a>
   </div>
 </section>
 
