@@ -166,32 +166,6 @@
   .work-row h3{font-family:'Noto Kufi Arabic'; font-weight:700; font-size:1.4rem; flex:1;}
   .work-row p{color:var(--ink-dim); font-size:0.95rem; max-width:320px; font-weight:300;}
 
-  /* ---------- projects ---------- */
-  .project-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:2px;}
-  .project-card{
-    background:var(--bg); border:1px solid var(--line); text-decoration:none; color:var(--ink);
-    display:flex; flex-direction:column; position:relative; overflow:hidden;
-    transition:transform .3s ease, background .3s ease;
-  }
-  .project-card:hover{transform:translateY(-6px); background:#0c0d11;}
-  .project-visual{
-    aspect-ratio:16/10; position:relative; overflow:hidden;
-    background:
-      radial-gradient(circle at 30% 30%, rgba(0,87,194,0.35), transparent 60%),
-      radial-gradient(circle at 75% 75%, rgba(200,16,46,0.25), transparent 60%),
-      var(--bg-panel);
-    border-bottom:1px solid var(--line);
-  }
-  .project-card.red .project-visual{
-    background:
-      radial-gradient(circle at 30% 30%, rgba(200,16,46,0.35), transparent 60%),
-      radial-gradient(circle at 75% 75%, rgba(0,87,194,0.25), transparent 60%),
-      var(--bg-panel);
-  }
-  .project-body{padding:26px 28px 30px;}
-  .project-body .pname{font-weight:700; font-size:1.2rem; margin-bottom:10px;}
-  .project-body .pdesc{color:var(--ink-dim); font-size:0.92rem; font-weight:300;}
-
   /* ---------- channels ---------- */
   .channels{background:var(--bg-panel); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
   .channel-group{margin-bottom:40px;}
@@ -248,7 +222,6 @@
   <ul>
     <li><a href="#about">عني</a></li>
     <li><a href="#work">شغلي</a></li>
-    <li><a href="#projects">مشاريعي</a></li>
     <li><a href="#channels">قنواتي</a></li>
     <li><a href="#contact">تواصل</a></li>
   </ul>
@@ -333,50 +306,10 @@
   </div>
 </section>
 
-<section id="projects">
-  <div class="section-head reveal">
-    <div>
-      <span class="num anton">03 — مشاريعي</span>
-      <h2>مشاريع اشتغلت عليها</h2>
-    </div>
-    <p>هيتضاف تفاصيل وصور وروابط لكل مشروع تباعًا.</p>
-  </div>
-  <div class="project-grid reveal">
-    <a href="#" class="project-card">
-      <div class="project-visual"></div>
-      <div class="project-body">
-        <div class="pname kufi">Mine Duty</div>
-        <p class="pdesc">مشروع سيرفر وتجربة Gaming تجمع بين Minecraft والمحتوى الحربي وتجارب البقاء.</p>
-      </div>
-    </a>
-    <a href="#" class="project-card red">
-      <div class="project-visual"></div>
-      <div class="project-body">
-        <div class="pname kufi">Web Projects</div>
-        <p class="pdesc">مجموعة من المواقع التي قمت بتصميمها وتطويرها.</p>
-      </div>
-    </a>
-    <a href="#" class="project-card">
-      <div class="project-visual"></div>
-      <div class="project-body">
-        <div class="pname kufi">FiveM Clothing</div>
-        <p class="pdesc">تصميم ملابس مخصصة لشخصيات FiveM وسيرفرات الألعاب.</p>
-      </div>
-    </a>
-    <a href="#" class="project-card red">
-      <div class="project-visual"></div>
-      <div class="project-body">
-        <div class="pname kufi">Content &amp; Design</div>
-        <p class="pdesc">نماذج من أعمال التصميم والفيديو وصناعة المحتوى.</p>
-      </div>
-    </a>
-  </div>
-</section>
-
 <section id="channels" class="channels">
   <div class="section-head reveal">
     <div>
-      <span class="num anton">04 — القنوات</span>
+      <span class="num anton">03 — القنوات</span>
       <h2>لاقيني هنا</h2>
     </div>
     <p>تابعني حسب المجال اللي بيهمك.</p>
