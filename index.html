@@ -370,9 +370,32 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
   input, textarea, [contenteditable="true"] { -webkit-user-select:text; user-select:text; }
 
   /* Name hierarchy: English is the main title, Arabic sits below at its former English size. */
-  .hero .hero-en-primary{font-size:clamp(3.1rem,8.8vw,7rem);letter-spacing:clamp(3px,.9vw,9px);margin-top:0;line-height:1.05}
-  .hero .hero-ar-secondary{font-size:clamp(.95rem,2vw,1.3rem);line-height:1.25;margin-top:12px;text-shadow:0 0 34px rgba(28,125,255,.24),0 0 65px rgba(255,51,82,.14)}
-  @media(max-width:600px){.hero .hero-en-primary{font-size:clamp(2.3rem,10vw,4rem);letter-spacing:clamp(1px,.5vw,4px)}.hero .hero-ar-secondary{font-size:1rem}}
+  .hero .hero-en-primary{
+    font-family:'Anton', Impact, sans-serif;
+    font-weight:400;
+    font-size:clamp(2.5rem,7.4vw,6.2rem);
+    letter-spacing:clamp(1px,.28vw,3px);
+    word-spacing:clamp(1px,.4vw,5px);
+    margin-top:0;
+    line-height:1.08;
+    width:100%;
+    white-space:normal;
+    text-align:center;
+    transform:scaleX(.98);
+    text-shadow:0 0 24px rgba(28,125,255,.18),0 0 36px rgba(255,51,82,.12);
+  }
+  .hero .hero-ar-secondary{
+    font-family:'Cairo', sans-serif;
+    font-weight:900;
+    font-size:clamp(.95rem,2vw,1.3rem);
+    line-height:1.25;
+    margin-top:10px;
+    text-shadow:0 0 34px rgba(28,125,255,.24),0 0 65px rgba(255,51,82,.14);
+  }
+  @media(max-width:600px){
+    .hero .hero-en-primary{font-size:clamp(2rem,9vw,3.6rem);letter-spacing:1px;word-spacing:2px}
+    .hero .hero-ar-secondary{font-size:1rem}
+  }
 </style>
 </head>
 <body>
