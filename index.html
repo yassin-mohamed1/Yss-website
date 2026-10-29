@@ -1016,8 +1016,13 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
     audio.addEventListener('pause', () => setPlaying(false));
     audio.addEventListener('play', () => setPlaying(true));
     window.addEventListener('pageshow', () => { audio.currentTime = 0; playIntro(); }, { once:true });
-    // Retry after the visitor's first natural interaction if autoplay was blocked.
-    const retryAutoplay = () => { if (audio.paused) playIntro(); };
+    // Best-effort autoplay on entry. Browsers may reject audible autoplay until a gesture.
+    // Do not retry on the audio button itself: doing so races with its click handler and can
+    // immediately pause the audio the visitor was trying to start.
+    const retryAutoplay = (event) => {
+      if (event?.target?.closest?.('#intro-audio-toggle')) return;
+      if (audio.paused) playIntro();
+    };
     window.addEventListener('pointerdown', retryAutoplay, { once:true, passive:true });
     window.addEventListener('keydown', retryAutoplay, { once:true });
     playIntro();
