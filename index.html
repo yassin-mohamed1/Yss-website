@@ -183,9 +183,34 @@
     width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center;
     background:rgba(245,244,240,0.05); border:1px solid var(--line);
   }
-  .icon-badge svg{width:22px; height:22px; stroke:var(--ink); fill:none;}
-  .channel-card .cname{font-family:'Noto Kufi Arabic'; font-weight:700; font-size:1.15rem;}
-  .channel-card .chandle{color:var(--ink-dim); font-size:0.88rem; font-weight:300;}
+  .icon-badge svg{width:24px;height:24px;stroke:currentColor;fill:none;transition:color .3s,filter .3s,transform .3s}
+  .channel-card .cname{font-family:'Noto Kufi Arabic';font-weight:800;font-size:1.15rem}
+  .channel-card .chandle{color:var(--ink-dim);font-size:.88rem;font-weight:300}
+  /* Official-platform accents; the existing tilt/lift animation stays intact. */
+  .channel-card[data-brand="youtube"] .icon-badge{color:#ff2638;background:rgba(255,38,56,.11);border-color:rgba(255,38,56,.32)}
+  .channel-card[data-brand="tiktok"] .icon-badge{color:#f5f5f5;background:rgba(0,0,0,.55);border-color:rgba(255,255,255,.24);box-shadow:2px 0 0 rgba(37,244,238,.7),-2px 0 0 rgba(254,44,85,.7)}
+  .channel-card[data-brand="instagram"] .icon-badge{color:#ff6b9b;background:rgba(193,53,132,.12);border-color:rgba(225,48,108,.35)}
+  .channel-card[data-brand="discord"] .icon-badge{color:#5865f2;background:rgba(88,101,242,.13);border-color:rgba(88,101,242,.35)}
+  .channel-card[data-brand="whatsapp"] .icon-badge{color:#25d366;background:rgba(37,211,102,.13);border-color:rgba(37,211,102,.4)}
+  .channel-card[data-brand="youtube"]:hover{border-color:rgba(255,38,56,.65);background:linear-gradient(125deg,rgba(255,38,56,.17),#08090d 72%)}
+  .channel-card[data-brand="youtube"]:hover:after{background:#ff2638}
+  .channel-card[data-brand="youtube"]:hover .icon-badge{background:#ff2638;color:#fff;box-shadow:0 0 26px rgba(255,38,56,.35)}
+  .channel-card[data-brand="tiktok"]:hover{border-color:rgba(37,244,238,.6);background:linear-gradient(125deg,rgba(37,244,238,.13),rgba(254,44,85,.10),#08090d 78%)}
+  .channel-card[data-brand="tiktok"]:hover:after{background:linear-gradient(90deg,#25f4ee,#fe2c55)}
+  .channel-card[data-brand="tiktok"]:hover .icon-badge{background:#050505;color:#25f4ee;box-shadow:0 0 25px rgba(37,244,238,.24),2px 0 #fe2c55}
+  .channel-card[data-brand="instagram"]:hover{border-color:rgba(225,48,108,.65);background:linear-gradient(125deg,rgba(131,58,180,.18),rgba(225,48,108,.12),#08090d 78%)}
+  .channel-card[data-brand="instagram"]:hover:after{background:linear-gradient(90deg,#833ab4,#e1306c,#f77737)}
+  .channel-card[data-brand="instagram"]:hover .icon-badge{color:#fff;background:linear-gradient(135deg,#833ab4,#e1306c,#f77737);box-shadow:0 0 25px rgba(225,48,108,.3)}
+  .channel-card[data-brand="discord"]:hover{border-color:rgba(88,101,242,.7);background:linear-gradient(125deg,rgba(88,101,242,.18),#08090d 78%)}
+  .channel-card[data-brand="discord"]:hover:after{background:#5865f2}
+  .channel-card[data-brand="discord"]:hover .icon-badge{color:#fff;background:#5865f2;box-shadow:0 0 25px rgba(88,101,242,.35)}
+  .channel-card[data-brand="whatsapp"]:hover{border-color:rgba(37,211,102,.7);background:linear-gradient(125deg,rgba(37,211,102,.16),#08090d 78%)}
+  .channel-card[data-brand="whatsapp"]:hover:after{background:#25d366}
+  .channel-card[data-brand="whatsapp"]:hover .icon-badge{color:#fff;background:#25d366;box-shadow:0 0 25px rgba(37,211,102,.35)}
+  .channel-group .group-label{font-family:'Anton','Noto Kufi Arabic',sans-serif;font-size:1.08rem;font-weight:400;letter-spacing:1.4px;color:#f3f5ff;text-shadow:0 2px 0 #000,0 0 16px rgba(28,125,255,.25)}
+  .channel-group:nth-of-type(2) .group-label{color:#ff303f;text-shadow:0 0 18px rgba(255,38,56,.25)}
+  .channel-group:nth-of-type(3) .group-label{color:#ff5ca8;text-shadow:0 0 18px rgba(225,48,108,.25)}
+  .channel-group:nth-of-type(4) .group-label{color:#8b95ff;text-shadow:0 0 18px rgba(88,101,242,.25)}
 
   /* ---------- contact ---------- */
   .contact{text-align:center; position:relative; overflow:hidden;}
@@ -512,6 +537,28 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
     });
   }, {threshold:0.15});
   els.forEach(el=>io.observe(el));
+
+  // Brand-specific platform marks and hover colors, without changing the original card motion.
+  document.querySelectorAll('.channel-card').forEach((card) => {
+    const href = card.getAttribute('href') || '';
+    let brand = 'discord';
+    if (href.includes('youtube.com')) brand = 'youtube';
+    else if (href.includes('tiktok.com')) brand = 'tiktok';
+    else if (href.includes('instagram.com')) brand = 'instagram';
+    else if (href.includes('wa.me')) brand = 'whatsapp';
+    card.dataset.brand = brand;
+    const icon = card.querySelector('.icon-badge svg');
+    if (!icon) return;
+    const marks = {
+      youtube: '<path fill="currentColor" stroke="none" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4L16 12l-6.4 3.6Z"/>',
+      tiktok: '<path fill="currentColor" stroke="none" d="M19.6 7.1a6.9 6.9 0 0 1-4.3-2V15a6.4 6.4 0 1 1-6.4-6.4c.4 0 .8 0 1.2.1v3.6a3 3 0 1 0 1.7 2.7V0h3.6c.3 2.7 2 4.8 4.8 5.1v2Z"/>',
+      instagram: '<rect x="3" y="3" width="18" height="18" rx="5" stroke-width="2.2"/><circle cx="12" cy="12" r="4.2" stroke-width="2.2"/><circle cx="17.5" cy="6.7" r="1.1" fill="currentColor" stroke="none"/>',
+      discord: '<path fill="currentColor" stroke="none" d="M19.7 5.2a17 17 0 0 0-4.2-1.3l-.5 1a15 15 0 0 0-6 0l-.5-1a17 17 0 0 0-4.2 1.3C1.6 9.1.9 12.9 1.2 16.6a17 17 0 0 0 5.2 2.6l1.1-1.8-1.7-.8.4-.3a12 12 0 0 0 11.6 0l.4.3-1.7.8 1.1 1.8a17 17 0 0 0 5.2-2.6c.4-4.3-.7-8-3.1-11.4ZM8.8 14.2c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Zm6.4 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Z"/>',
+      whatsapp: '<path fill="currentColor" stroke="none" d="M20.5 3.5A11.9 11.9 0 0 0 1.8 17.8L.2 24l6.4-1.7A11.9 11.9 0 0 0 20.5 3.5ZM12 21a9 9 0 0 1-4.6-1.3l-.3-.2-3.8 1 1-3.7-.2-.4A9 9 0 1 1 12 21Zm5-6.7c-.3-.2-1.8-.9-2.1-1s-.5-.2-.7.2-.8 1-1 1.1-.4.2-.7 0a7.5 7.5 0 0 1-2.2-1.4 8.3 8.3 0 0 1-1.5-1.9c-.2-.3 0-.5.2-.7l.5-.6c.2-.2.2-.4.3-.6s0-.4 0-.6-.7-1.7-1-2.3c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.8 1.2 3.2 1.4 3.4a11 11 0 0 0 4.2 3.7c.6.3 1.1.5 1.5.6.6.2 1.2.2 1.7.1.5-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4s-.3-.2-.6-.4Z"/>'
+    };
+    icon.setAttribute('viewBox', '0 0 24 24');
+    icon.innerHTML = marks[brand];
+  });
 
   // A lightweight interactive particle field: cursor ripples + flowing wave.
   (() => {
