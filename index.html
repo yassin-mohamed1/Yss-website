@@ -934,14 +934,16 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
   (()=>{const section=document.querySelector('.scroll-story');if(!section||matchMedia('(prefers-reduced-motion: reduce)').matches)return;const panels=[...section.querySelectorAll('.story-panel')],num=document.getElementById('story-number'),hint=document.getElementById('story-hint'),fill=document.getElementById('story-track-fill');let active=-1,queued=false;function update(){queued=false;const rect=section.getBoundingClientRect(),span=section.offsetHeight-innerHeight,p=Math.max(0,Math.min(.9999,-rect.top/Math.max(1,span))),next=Math.min(panels.length-1,Math.floor(p*panels.length));if(next!==active){panels.forEach((el,i)=>el.classList.toggle('active',i===next));active=next;num.textContent=String(next+1).padStart(2,'0');hint.textContent=String(next+1).padStart(2,'0')+' / 0'+panels.length}fill.style.width=((p*panels.length)%1*100)+'%'}function scroll(){if(!queued){queued=true;requestAnimationFrame(update)}}addEventListener('scroll',scroll,{passive:true});addEventListener('resize',scroll,{passive:true});update()})();
 
 
-  // Five-second assemble animation: real page elements fly into their exact existing positions.
+  // Five-second assemble animation: visible page pieces travel slowly into their final positions.
   (() => {
     const intro = document.getElementById('cinematic-intro');
     if (!intro) return;
+    // Never block scrolling or clicks while the page is assembling.
+    document.body.classList.remove('intro-lock');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!reduced && Element.prototype.animate) {
       const targets = [
-        document.querySelector('nav'),
+        document.querySelector('nav .mark'),
         ...document.querySelectorAll('nav ul a'),
         document.querySelector('.hero-eyebrow'),
         document.querySelector('.hero-en-primary'),
@@ -960,15 +962,19 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
         const rect = el.getBoundingClientRect();
         const cx = rect.left + rect.width / 2;
         const cy = rect.top + rect.height / 2;
-        const dx = (innerWidth / 2 - cx) * (0.7 + Math.random() * 1.1) + (Math.random() - .5) * 180;
-        const dy = (innerHeight / 2 - cy) * (0.7 + Math.random() * 1.1) + (Math.random() - .5) * 160;
-        const spin = (Math.random() - .5) * 46;
-        const delay = Math.min(i * 65, 650);
+        // Start pieces from different edges rather than all bursting from one point.
+        const angle = (i * 137.5 + Math.random() * 55) * Math.PI / 180;
+        const radius = Math.min(Math.max(innerWidth, innerHeight) * .62, 620);
+        const dx = Math.cos(angle) * radius + (innerWidth / 2 - cx) * .18;
+        const dy = Math.sin(angle) * radius + (innerHeight / 2 - cy) * .18;
+        const spin = (Math.random() - .5) * 28;
+        const delay = Math.min(i * 90, 720);
+        const duration = el.matches('.hero-en-primary,.hero-ar-secondary') ? 4050 : 3450 + (i % 4) * 150;
         el.animate([
-          { translate: dx + 'px ' + dy + 'px', rotate: spin + 'deg', scale: .45, opacity: 0, filter: 'blur(7px)' },
-          { translate: (dx * -.12) + 'px ' + (dy * -.12) + 'px', rotate: (spin * -.16) + 'deg', scale: 1.035, opacity: 1, filter: 'blur(0px)', offset: .78 },
+          { translate: dx + 'px ' + dy + 'px', rotate: spin + 'deg', scale: .72, opacity: 0, filter: 'blur(5px)' },
+          { translate: (dx * -.09) + 'px ' + (dy * -.09) + 'px', rotate: (spin * -.12) + 'deg', scale: 1.025, opacity: 1, filter: 'blur(0px)', offset: .78 },
           { translate: '0px 0px', rotate: '0deg', scale: 1, opacity: 1, filter: 'blur(0px)' }
-        ], { duration: 1650 + Math.random() * 600, delay, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' });
+        ], { duration, delay, easing: 'cubic-bezier(.2,.75,.18,1)', fill: 'both' });
       });
     }
     window.setTimeout(() => {
@@ -987,7 +993,7 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
     const state = document.getElementById('intro-audio-state');
     const svg = document.getElementById('intro-audio-svg');
     if (!audio || !button) return;
-    audio.loop = false;
+    audio.loop = true;
     audio.currentTime = 0;
     const setPlaying = (playing) => {
       button.classList.toggle('is-playing', playing);
@@ -1003,13 +1009,17 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
       catch (_) { setPlaying(false); }
     };
     button.addEventListener('click', async () => {
-      if (!audio.paused) { audio.pause(); audio.currentTime = 0; setPlaying(false); }
+      if (!audio.paused) { audio.pause(); setPlaying(false); }
       else { await playIntro(); }
     });
     audio.addEventListener('ended', () => setPlaying(false));
     audio.addEventListener('pause', () => setPlaying(false));
     audio.addEventListener('play', () => setPlaying(true));
     window.addEventListener('pageshow', () => { audio.currentTime = 0; playIntro(); }, { once:true });
+    // Retry after the visitor's first natural interaction if autoplay was blocked.
+    const retryAutoplay = () => { if (audio.paused) playIntro(); };
+    window.addEventListener('pointerdown', retryAutoplay, { once:true, passive:true });
+    window.addEventListener('keydown', retryAutoplay, { once:true });
     playIntro();
   })();
 
