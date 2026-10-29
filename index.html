@@ -368,6 +368,11 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
   /* Keep text from being accidentally selected while dragging interactive crystals. */
   body, body * { -webkit-user-select:none; user-select:none; }
   input, textarea, [contenteditable="true"] { -webkit-user-select:text; user-select:text; }
+
+  /* Name hierarchy: English is the main title, Arabic sits below at its former English size. */
+  .hero .hero-en-primary{font-size:clamp(3.1rem,8.8vw,7rem);letter-spacing:clamp(3px,.9vw,9px);margin-top:0;line-height:1.05}
+  .hero .hero-ar-secondary{font-size:clamp(.95rem,2vw,1.3rem);line-height:1.25;margin-top:12px;text-shadow:0 0 34px rgba(28,125,255,.24),0 0 65px rgba(255,51,82,.14)}
+  @media(max-width:600px){.hero .hero-en-primary{font-size:clamp(2.3rem,10vw,4rem);letter-spacing:clamp(1px,.5vw,4px)}.hero .hero-ar-secondary{font-size:1rem}}
 </style>
 </head>
 <body>
@@ -388,8 +393,8 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
   <div class="orb orb-red"></div>
   <div class="beam"></div>
   <div class="hero-eyebrow">PERSONAL PROFILE</div>
-  <h1 class="kufi">ياسين محمد</h1>
-  <div class="en-name anton">YASSIN&nbsp;&nbsp;MOHAMED</div>
+  <div class="en-name anton hero-en-primary">YASSIN&nbsp;&nbsp;MOHAMED</div>
+  <h1 class="kufi hero-ar-secondary">ياسين محمد</h1>
   <div class="hero-signature" aria-hidden="true"><span></span><i>CREATOR · DESIGN · TECHNOLOGY · GAMING</i><span></span></div>
 </header>
 
