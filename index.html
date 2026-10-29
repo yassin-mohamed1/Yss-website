@@ -605,7 +605,7 @@ nav .mark span{color:var(--blue-glow)}
   // Cinematic site-wide 3D: every interactive surface responds softly to pointer position.
   if (window.matchMedia('(hover:hover) and (pointer:fine)').matches &&
       !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const surfaces = document.querySelectorAll('.channel-card,.work-row,.tag-pill,.btn,.profile-card,.stack-card,.floating-cube,.orbit-platform,.profile-ring');
+    const surfaces = document.querySelectorAll('.channel-card,.work-row,.tag-pill,.btn,.profile-card,.stack-card,.floating-cube,.orbit-platform,.profile-ring,nav ul a,.contact-links a,.scene-links a');
     surfaces.forEach((el) => {
       el.classList.add('tilt-surface');
       el.addEventListener('pointermove', (e) => {
@@ -626,7 +626,7 @@ nav .mark span{color:var(--blue-glow)}
       }, {passive:true});
     });
 
-    const textTargets = document.querySelectorAll('.hero-eyebrow,.hero h1,.en-name,.hero p.tag,.section-head h2,.section-head p,.lede,.work-row h3,.work-row p,.scene-copy h2,.scene-copy p,.contact h2,.contact p,footer');
+    const textTargets = document.querySelectorAll('.hero-eyebrow,.hero h1,.en-name,.hero p.tag,.section-head h2,.section-head p,.lede,.work-row h3,.work-row p,.scene-copy h2,.scene-copy p,.contact h2,.contact p,footer,nav ul a,.contact-links a,.scene-links a');
     textTargets.forEach(el => {
       el.classList.add('pointer-text-depth');
       el.addEventListener('pointermove', (e) => {
