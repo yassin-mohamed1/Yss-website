@@ -397,12 +397,27 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
     .hero .hero-en-primary{font-size:clamp(1.8rem,8.6vw,3.6rem);letter-spacing:0;white-space:normal;-webkit-text-stroke:.25px currentColor}
     .hero .hero-ar-secondary{font-size:1rem}
   }
+  .intro-audio-toggle{position:fixed;right:22px;bottom:22px;z-index:1000;display:flex;align-items:center;gap:10px;padding:11px 15px;border:1px solid rgba(70,210,255,.38);border-radius:999px;color:#f5f7ff;background:linear-gradient(120deg,rgba(7,12,25,.88),rgba(28,10,27,.88));box-shadow:0 0 22px rgba(28,125,255,.12),inset 0 0 16px rgba(255,255,255,.025);backdrop-filter:blur(14px);font:700 12px 'Tajawal',sans-serif;letter-spacing:.2px;cursor:pointer;transition:transform .25s,border-color .25s,box-shadow .25s,color .25s}
+  .intro-audio-toggle:hover{transform:translateY(-3px);border-color:#ff477e;box-shadow:0 0 26px rgba(255,51,105,.22),0 0 18px rgba(28,125,255,.16)}
+  .intro-audio-toggle .audio-icon{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#25d9ff,#ff477e);color:#070910;box-shadow:0 0 15px rgba(37,217,255,.18)}
+  .intro-audio-toggle svg{width:16px;height:16px;fill:currentColor}
+  .intro-audio-toggle .audio-state{color:#7deaff;font-size:10px;letter-spacing:1px;text-transform:uppercase}
+  .intro-audio-toggle.is-playing .audio-icon{animation:audioPulse 1.5s ease-in-out infinite}
+  @keyframes audioPulse{0%,100%{box-shadow:0 0 12px rgba(37,217,255,.2)}50%{box-shadow:0 0 23px rgba(255,71,126,.55)}}
+  @media(max-width:600px){.intro-audio-toggle{right:12px;bottom:14px;padding:9px 12px;gap:8px}.intro-audio-toggle .audio-icon{width:27px;height:27px}}
 </style>
 </head>
 <body>
 <div class="page-progress" aria-hidden="true"></div>
 <canvas id="particle-field" aria-hidden="true"></canvas>
 <span class="crystal-hud-score" aria-live="polite" style="position:fixed;left:-9999px"><b id="crystal-score">0</b></span>
+<audio id="site-intro-audio" src="./intro.mp3" preload="auto"></audio>
+<button class="intro-audio-toggle" id="intro-audio-toggle" type="button" aria-label="تشغيل أو إيقاف موسيقى المقدمة">
+  <span class="audio-icon" aria-hidden="true">
+    <svg id="intro-audio-svg" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4.03v8.05A4.5 4.5 0 0 0 16.5 12zM14 3.23v2.06a7 7 0 0 1 0 13.42v2.06a9 9 0 0 0 0-17.54z"/></svg>
+  </span>
+  <span><span id="intro-audio-label">موسيقى الإنترو</span><br><span class="audio-state" id="intro-audio-state">تشغيل الصوت</span></span>
+</button>
 <nav>
   <div class="mark" aria-label="Yassin Mohamed">YASSIN<span>.</span></div>
   <ul>
@@ -866,6 +881,42 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
 
 
   (()=>{const section=document.querySelector('.scroll-story');if(!section||matchMedia('(prefers-reduced-motion: reduce)').matches)return;const panels=[...section.querySelectorAll('.story-panel')],num=document.getElementById('story-number'),hint=document.getElementById('story-hint'),fill=document.getElementById('story-track-fill');let active=-1,queued=false;function update(){queued=false;const rect=section.getBoundingClientRect(),span=section.offsetHeight-innerHeight,p=Math.max(0,Math.min(.9999,-rect.top/Math.max(1,span))),next=Math.min(panels.length-1,Math.floor(p*panels.length));if(next!==active){panels.forEach((el,i)=>el.classList.toggle('active',i===next));active=next;num.textContent=String(next+1).padStart(2,'0');hint.textContent=String(next+1).padStart(2,'0')+' / 0'+panels.length}fill.style.width=((p*panels.length)%1*100)+'%'}function scroll(){if(!queued){queued=true;requestAnimationFrame(update)}}addEventListener('scroll',scroll,{passive:true});addEventListener('resize',scroll,{passive:true});update()})();
+
+
+  // A short intro attempts autoplay on each fresh page visit. If the browser blocks it,
+  // the same compact button lets the visitor start it manually or mute it at any time.
+  (() => {
+    const audio = document.getElementById('site-intro-audio');
+    const button = document.getElementById('intro-audio-toggle');
+    const label = document.getElementById('intro-audio-label');
+    const state = document.getElementById('intro-audio-state');
+    const svg = document.getElementById('intro-audio-svg');
+    if (!audio || !button) return;
+    audio.loop = false;
+    audio.currentTime = 0;
+    const setPlaying = (playing) => {
+      button.classList.toggle('is-playing', playing);
+      label.textContent = playing ? 'موسيقى الإنترو' : 'موسيقى الإنترو';
+      state.textContent = playing ? 'الصوت شغال' : 'تشغيل الصوت';
+      button.setAttribute('aria-pressed', String(playing));
+      svg.innerHTML = playing
+        ? '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>'
+        : '<path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4.03v8.05A4.5 4.5 0 0 0 16.5 12zM14 3.23v2.06a7 7 0 0 1 0 13.42v2.06a9 9 0 0 0 0-17.54z"/>';
+    };
+    const playIntro = async () => {
+      try { await audio.play(); setPlaying(true); }
+      catch (_) { setPlaying(false); }
+    };
+    button.addEventListener('click', async () => {
+      if (!audio.paused) { audio.pause(); audio.currentTime = 0; setPlaying(false); }
+      else { await playIntro(); }
+    });
+    audio.addEventListener('ended', () => setPlaying(false));
+    audio.addEventListener('pause', () => setPlaying(false));
+    audio.addEventListener('play', () => setPlaying(true));
+    window.addEventListener('pageshow', () => { audio.currentTime = 0; playIntro(); }, { once:true });
+    playIntro();
+  })();
 
 </script>
 
