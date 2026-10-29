@@ -364,6 +364,10 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
   .whatsapp-card:hover{border-color:rgba(49,215,123,.45);box-shadow:0 20px 45px rgba(0,0,0,.25),0 0 24px rgba(49,215,123,.08)}
   @media(max-width:860px){nav ul{display:flex;gap:6px}nav ul a{min-width:0;padding:9px 11px;font-size:.8rem}.hero-signature{font-size:8px;letter-spacing:1.1px;gap:8px}.hero-signature span{width:15px}.contact-links a{min-width:145px;padding:13px 16px}}
 
+
+  /* Keep text from being accidentally selected while dragging interactive crystals. */
+  body, body * { -webkit-user-select:none; user-select:none; }
+  input, textarea, [contenteditable="true"] { -webkit-user-select:text; user-select:text; }
 </style>
 </head>
 <body>
@@ -584,12 +588,13 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
         }
       }
       // A small set of drifting crystal particles travel across the whole viewport.
-      gems = Array.from({length: Math.max(19, Math.min(30, Math.round(w / 48)))}, (_, i) => ({
+      const gemCount = Math.max(19, Math.min(30, Math.round(w / 48)));
+      gems = Array.from({length: gemCount}, (_, i) => ({
         x: Math.random() * w, y: Math.random() * h,
         vx: (Math.random() - .5) * .42, vy: (Math.random() - .5) * .34,
         size: i % 4 === 0 ? 6 + Math.random() * 3 : 3 + Math.random() * 4, phase: Math.random() * Math.PI * 2,
-        kind: i % 4 === 0 ? 'green' : 'normal',
-        color: i % 4 === 0 ? '70,255,155' : (i % 3 === 0 ? '255,51,82' : (i % 3 === 1 ? '37,244,238' : '28,125,255'))
+        kind: i < 3 ? 'green' : 'normal',
+        color: i < 3 ? '70,255,155' : (i % 3 === 0 ? '255,51,82' : (i % 3 === 1 ? '37,244,238' : '28,125,255'))
       }));
     };
     const resize = () => {
@@ -599,6 +604,10 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
       canvas.style.width = w+'px'; canvas.style.height = h+'px';
       ctx.setTransform(dpr,0,0,dpr,0,0); makeParticles();
     };
+    // Prevent text selection while the pointer is dragging a crystal.
+    document.addEventListener('selectstart', (e) => {
+      if (grabbedGem && pointer.down) e.preventDefault();
+    });
     const move = (e) => {
       pointer.px = pointer.x; pointer.py = pointer.y;
       pointer.x = e.clientX; pointer.y = e.clientY; pointer.active = true;
