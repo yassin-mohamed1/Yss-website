@@ -240,7 +240,7 @@
   /* ---------- interactive particle field & polish ---------- */
   #particle-field{
     position:fixed; inset:0; width:100%; height:100%; z-index:2;
-    pointer-events:none; opacity:.72; mix-blend-mode:screen;
+    pointer-events:none; opacity:.22; mix-blend-mode:screen;
   }
   .page-progress{position:fixed;top:0;right:0;height:3px;width:0;z-index:120;
     background:linear-gradient(90deg,var(--red-glow),var(--blue-glow));box-shadow:0 0 14px #1c7dff;}
@@ -270,7 +270,7 @@
     .work-row h3{font-size:1.15rem;}
     .channel-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
     .channel-card{padding:24px 18px;}
-    #particle-field{opacity:.48;}
+    #particle-field{opacity:.14;}
   }
   @media(prefers-reduced-motion:reduce){#particle-field{display:none}.back-top{transition:none}}
 
@@ -570,12 +570,12 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
     const pointer = { x: -1000, y: -1000, active: false, px: -1000, py: -1000 };
     const colors = ['28,125,255', '255,51,82', '180,205,255'];
     const makeParticles = () => {
-      const spacing = window.innerWidth < 650 ? 34 : 27;
+      const spacing = window.innerWidth < 650 ? 52 : 44;
       particles = [];
       for (let y = spacing * .5; y < h; y += spacing) {
         for (let x = spacing * .5; x < w; x += spacing) {
-          if (Math.random() > .88) continue;
-          particles.push({ ox:x, oy:y, x, y, vx:0, vy:0, r:Math.random()*1.15+.35,
+          if (Math.random() > .94) continue;
+          particles.push({ ox:x, oy:y, x, y, vx:0, vy:0, r:Math.random()*.7+.25,
             phase:Math.random()*Math.PI*2, color:colors[Math.random() < .57 ? 0 : (Math.random()<.5 ? 1 : 2)] });
         }
       }
@@ -616,9 +616,35 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
         }
         p.vx += (tx-p.x)*.035; p.vy += (ty-p.y)*.035;
         p.vx *= .88; p.vy *= .88; p.x += p.vx; p.y += p.vy;
-        const alpha = .18 + (Math.sin(time+p.phase)+1)*.19;
+        const alpha = .035 + (Math.sin(time+p.phase)+1)*.045;
         ctx.beginPath(); ctx.fillStyle = 'rgba('+p.color+','+alpha+')';
         ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      }
+      // Quiet geometric accents: sparse outlined squares and short light strokes.
+      // These replace the dense star-field feel with a calmer, designed background.
+      const gridStep = w < 650 ? 170 : 210;
+      for (let gy = gridStep * .5; gy < h; gy += gridStep) {
+        for (let gx = gridStep * .5; gx < w; gx += gridStep) {
+          const seed = Math.sin(gx * 12.9898 + gy * 78.233);
+          if (seed < .18) continue;
+          const size = 9 + Math.abs(seed) * 15;
+          const pulse = .025 + (Math.sin(time * .45 + seed * 8) + 1) * .012;
+          ctx.save();
+          ctx.translate(gx + Math.sin(time * .18 + seed) * 3, gy);
+          ctx.rotate(seed * .22);
+          ctx.strokeStyle = seed > .65
+            ? 'rgba(255,51,82,' + pulse + ')'
+            : 'rgba(28,125,255,' + pulse + ')';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(-size / 2, -size / 2, size, size);
+          if (seed > .72) {
+            ctx.beginPath();
+            ctx.moveTo(size * .8, -size * .8);
+            ctx.lineTo(size * 1.65, -size * .8);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
       }
       // Subtle connections appear only between nearby points, keeping the effect light.
       if (w > 700) {
@@ -626,8 +652,8 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
           const a = particles[i];
           for (let j=i+1; j<Math.min(i+5,particles.length); j++) {
             const b = particles[j], dx=a.x-b.x, dy=a.y-b.y, d=dx*dx+dy*dy;
-            if (d < 76*76) {
-              ctx.strokeStyle='rgba(90,145,255,'+(0.055*(1-Math.sqrt(d)/76))+')';
+            if (d < 76*76 && Math.random() < .08) {
+              ctx.strokeStyle='rgba(90,145,255,'+(0.018*(1-Math.sqrt(d)/76))+')';
               ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
             }
           }
