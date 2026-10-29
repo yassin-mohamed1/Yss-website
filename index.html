@@ -378,7 +378,7 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
 <div class="crystal-hud" aria-live="polite">
   <span class="crystal-hud-label">CRYSTAL HUNT</span>
   <span class="crystal-hud-score">◆ <b id="crystal-score">0</b></span>
-  <span class="crystal-hud-help">اسحب الجواهر وحرّكها · اضغط على الخضراء لجمعها</span>
+  <span class="crystal-hud-help"> </span>
 </div>
 <nav>
   <div class="mark" aria-label="Yassin Mohamed">YASSIN<span>.</span></div>
@@ -579,7 +579,7 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
     if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
-    let w = 0, h = 0, dpr = 1, particles = [], gems = [], frame = 0, crystalScore = 0, grabbedGem = null;
+    let w = 0, h = 0, dpr = 1, particles = [], gems = [], frame = 0, crystalScore = 0, grabbedGem = null, dragMoved = false;
     const scoreLabel = document.getElementById('crystal-score');
     const pointer = { x: -1000, y: -1000, active: false, down: false, px: -1000, py: -1000 };
     const colors = ['28,125,255', '255,51,82', '180,205,255'];
@@ -597,7 +597,7 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
       gems = Array.from({length: Math.max(9, Math.min(18, Math.round(w / 82)))}, (_, i) => ({
         x: Math.random() * w, y: Math.random() * h,
         vx: (Math.random() - .5) * .42, vy: (Math.random() - .5) * .34,
-        size: 3 + Math.random() * 4, phase: Math.random() * Math.PI * 2,
+        size: i % 4 === 0 ? 6 + Math.random() * 3 : 3 + Math.random() * 4, phase: Math.random() * Math.PI * 2,
         kind: i % 4 === 0 ? 'green' : 'normal',
         color: i % 4 === 0 ? '70,255,155' : (i % 3 === 0 ? '255,51,82' : (i % 3 === 1 ? '37,244,238' : '28,125,255'))
       }));
@@ -613,32 +613,39 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
       pointer.px = pointer.x; pointer.py = pointer.y;
       pointer.x = e.clientX; pointer.y = e.clientY; pointer.active = true;
       if (grabbedGem && pointer.down) {
+        const dx = pointer.x - pointer.px, dy = pointer.y - pointer.py;
+        if (Math.hypot(pointer.x - grabbedGem.startX, pointer.y - grabbedGem.startY) > 5) dragMoved = true;
         grabbedGem.x = pointer.x; grabbedGem.y = pointer.y;
-        grabbedGem.vx = (pointer.x - pointer.px) * .16;
-        grabbedGem.vy = (pointer.y - pointer.py) * .16;
+        grabbedGem.vx = dx * .16;
+        grabbedGem.vy = dy * .16;
       }
     };
-    const releaseGem = () => { pointer.down = false; grabbedGem = null; };
+    const releaseGem = () => {
+      if (grabbedGem && !dragMoved) {
+        crystalScore++;
+        if (scoreLabel) scoreLabel.textContent = String(crystalScore);
+        grabbedGem.x = Math.random() * w;
+        grabbedGem.y = Math.random() * h;
+        grabbedGem.vx = (Math.random() - .5) * .5;
+        grabbedGem.vy = (Math.random() - .5) * .5;
+      }
+      pointer.down = false; grabbedGem = null; dragMoved = false;
+    };
     window.addEventListener('pointermove', move, { passive:true });
     window.addEventListener('pointerdown', (e) => {
       if (e.button !== undefined && e.button !== 0) return;
       pointer.x = e.clientX; pointer.y = e.clientY; pointer.active = true; pointer.down = true;
-      let nearest = null, nearestDist = 38;
+      let nearest = null, nearestDist = 28;
       for (const g of gems) {
+        if (g.kind !== 'green') continue;
         const d = Math.hypot(g.x - pointer.x, g.y - pointer.y);
         if (d < nearestDist) { nearest = g; nearestDist = d; }
       }
-      if (!nearest) return;
-      if (nearest.kind === 'green') {
-        crystalScore++;
-        if (scoreLabel) scoreLabel.textContent = String(crystalScore);
-        nearest.x = Math.random() * w;
-        nearest.y = Math.random() * h;
-        nearest.vx = (Math.random() - .5) * .5;
-        nearest.vy = (Math.random() - .5) * .5;
-        nearest.phase = Math.random() * Math.PI * 2;
-      } else {
+      if (nearest) {
         grabbedGem = nearest;
+        grabbedGem.startX = pointer.x;
+        grabbedGem.startY = pointer.y;
+        dragMoved = false;
       }
     }, { passive:true });
     window.addEventListener('pointerup', releaseGem, { passive:true });
