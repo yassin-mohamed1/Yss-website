@@ -407,16 +407,16 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
   @media(max-width:600px){.intro-audio-toggle{right:12px;bottom:14px;padding:9px 12px;gap:8px}.intro-audio-toggle .audio-icon{width:27px;height:27px}}
 
   /* ---------- cinematic 5-second intro overlay (site design remains untouched) ---------- */
-  body.intro-lock{overflow:hidden}
-  .cinematic-intro{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;overflow:hidden;background:rgba(2,2,3,.12);opacity:1;visibility:visible;transition:opacity .65s ease,visibility .65s ease;pointer-events:none}
+  body.intro-lock{overflow:hidden;touch-action:none} body.intro-lock main,body.intro-lock nav,body.intro-lock .intro-audio-toggle,body.intro-lock a,body.intro-lock button{pointer-events:none!important}
+  .cinematic-intro{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;overflow:hidden;background:rgba(2,2,3,.12);opacity:1;visibility:visible;transition:opacity .65s ease,visibility .65s ease;pointer-events:auto}
   .cinematic-intro .intro-center,.cinematic-intro .intro-floater{display:none!important}
   .cinematic-intro:before,.cinematic-intro:after{mix-blend-mode:screen}
   .intro-grid{opacity:.55}
   .intro-scan{opacity:.7}
   .cinematic-intro.is-leaving{opacity:0;visibility:hidden;pointer-events:none}
   .cinematic-intro:before,.cinematic-intro:after{content:"";position:absolute;width:70vmax;height:70vmax;border-radius:50%;filter:blur(90px);opacity:.28;pointer-events:none}
-  .cinematic-intro:before{background:#0057c2;top:-40vmax;right:-15vmax;animation:introGlow 5s ease forwards}
-  .cinematic-intro:after{background:#c8102e;bottom:-45vmax;left:-20vmax;animation:introGlow 5s ease reverse}
+  .cinematic-intro:before{background:#0057c2;top:-40vmax;right:-15vmax;animation:introGlow 10s ease forwards}
+  .cinematic-intro:after{background:#c8102e;bottom:-45vmax;left:-20vmax;animation:introGlow 10s ease reverse}
   .intro-grid{position:absolute;inset:-50%;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:46px 46px;transform:perspective(500px) rotateX(58deg) scale(1.5);mask-image:linear-gradient(transparent,#000 35%,#000 65%,transparent);animation:introGrid 5s cubic-bezier(.2,.7,.1,1) forwards}
   .intro-center{position:relative;z-index:2;text-align:center;padding:24px;width:min(92vw,760px)}
   .intro-kicker{font:700 10px 'Tajawal',sans-serif;letter-spacing:5px;color:#76eaff;opacity:0;animation:introTextIn .65s .25s forwards}
@@ -934,12 +934,12 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
   (()=>{const section=document.querySelector('.scroll-story');if(!section||matchMedia('(prefers-reduced-motion: reduce)').matches)return;const panels=[...section.querySelectorAll('.story-panel')],num=document.getElementById('story-number'),hint=document.getElementById('story-hint'),fill=document.getElementById('story-track-fill');let active=-1,queued=false;function update(){queued=false;const rect=section.getBoundingClientRect(),span=section.offsetHeight-innerHeight,p=Math.max(0,Math.min(.9999,-rect.top/Math.max(1,span))),next=Math.min(panels.length-1,Math.floor(p*panels.length));if(next!==active){panels.forEach((el,i)=>el.classList.toggle('active',i===next));active=next;num.textContent=String(next+1).padStart(2,'0');hint.textContent=String(next+1).padStart(2,'0')+' / 0'+panels.length}fill.style.width=((p*panels.length)%1*100)+'%'}function scroll(){if(!queued){queued=true;requestAnimationFrame(update)}}addEventListener('scroll',scroll,{passive:true});addEventListener('resize',scroll,{passive:true});update()})();
 
 
-  // Five-second assemble animation: visible page pieces travel slowly into their final positions.
+  // Ten-second assemble animation: visible page pieces travel slowly into their final positions.
   (() => {
     const intro = document.getElementById('cinematic-intro');
     if (!intro) return;
-    // Never block scrolling or clicks while the page is assembling.
-    document.body.classList.remove('intro-lock');
+    // Keep the page locked until the full ten-second assemble animation finishes.
+    document.body.classList.add('intro-lock');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!reduced && Element.prototype.animate) {
       const targets = [
@@ -968,8 +968,8 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
         const dx = Math.cos(angle) * radius + (innerWidth / 2 - cx) * .18;
         const dy = Math.sin(angle) * radius + (innerHeight / 2 - cy) * .18;
         const spin = (Math.random() - .5) * 28;
-        const delay = Math.min(i * 90, 720);
-        const duration = el.matches('.hero-en-primary,.hero-ar-secondary') ? 4050 : 3450 + (i % 4) * 150;
+        const delay = Math.min(i * 110, 1000);
+        const duration = el.matches('.hero-en-primary,.hero-ar-secondary') ? 8500 : 7900 + (i % 4) * 180;
         el.animate([
           { translate: dx + 'px ' + dy + 'px', rotate: spin + 'deg', scale: .72, opacity: 0, filter: 'blur(5px)' },
           { translate: (dx * -.09) + 'px ' + (dy * -.09) + 'px', rotate: (spin * -.12) + 'deg', scale: 1.025, opacity: 1, filter: 'blur(0px)', offset: .78 },
@@ -981,10 +981,10 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
       intro.classList.add('is-leaving');
       document.body.classList.remove('intro-lock');
       window.setTimeout(() => intro.remove(), 750);
-    }, 5000);
+    }, 10000);
   })();
 
-  // A short intro attempts autoplay on each fresh page visit. If the browser blocks it,
+  // Play the intro once on each fresh page visit. If the browser blocks it,
   // the same compact button lets the visitor start it manually or mute it at any time.
   (() => {
     const audio = document.getElementById('site-intro-audio');
@@ -993,7 +993,7 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
     const state = document.getElementById('intro-audio-state');
     const svg = document.getElementById('intro-audio-svg');
     if (!audio || !button) return;
-    audio.loop = true;
+    audio.loop = false;
     audio.currentTime = 0;
     const setPlaying = (playing) => {
       button.classList.toggle('is-playing', playing);
