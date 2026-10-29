@@ -213,10 +213,49 @@
     .about-grid{grid-template-columns:1fr;}
     .work-row{flex-wrap:wrap;}
   }
+
+  /* ---------- interactive particle field & polish ---------- */
+  #particle-field{
+    position:fixed; inset:0; width:100%; height:100%; z-index:2;
+    pointer-events:none; opacity:.72; mix-blend-mode:screen;
+  }
+  .page-progress{position:fixed;top:0;right:0;height:3px;width:0;z-index:120;
+    background:linear-gradient(90deg,var(--red-glow),var(--blue-glow));box-shadow:0 0 14px #1c7dff;}
+  nav{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:padding .3s ease,background .3s ease;}
+  nav.scrolled{padding-top:15px;padding-bottom:15px;background:rgba(2,2,3,.82);border-bottom:1px solid var(--line);}
+  .hero{cursor:crosshair;}
+  .hero h1{position:relative;}
+  .hero h1::after{content:'';position:absolute;bottom:-13px;right:50%;transform:translateX(50%);
+    height:2px;width:clamp(70px,12vw,150px);background:linear-gradient(90deg,var(--blue-glow),var(--red-glow));opacity:.8;}
+  .btn,.channel-card,.work-row,.tag-pill{will-change:transform;}
+  .btn:focus-visible,a:focus-visible{outline:2px solid var(--blue-glow);outline-offset:5px;}
+  .work-row{transition:background .3s ease,transform .3s ease,border-color .3s ease;}
+  .work-row:hover{transform:translateX(-5px);border-color:rgba(28,125,255,.28);}
+  .channel-card{transform-style:preserve-3d;}
+  .channel-card .icon-badge{transition:transform .35s ease,background .35s ease;}
+  .channel-card:hover .icon-badge{transform:translateY(-3px) rotate(-7deg);background:rgba(28,125,255,.14);}
+  .back-top{position:fixed;bottom:24px;left:24px;z-index:110;width:44px;height:44px;
+    border:1px solid rgba(245,244,240,.18);background:rgba(7,8,11,.8);color:#fff;
+    border-radius:50%;display:grid;place-items:center;text-decoration:none;font-size:1.2rem;
+    opacity:0;visibility:hidden;transform:translateY(10px);transition:.25s;backdrop-filter:blur(10px);}
+  .back-top.show{opacity:1;visibility:visible;transform:translateY(0);}
+  @media(max-width:600px){
+    section{padding:88px 6%;}
+    nav{padding:18px 6%;}
+    .hero{cursor:auto;}
+    .work-row{padding:26px 20px;gap:15px;}
+    .work-row h3{font-size:1.15rem;}
+    .channel-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .channel-card{padding:24px 18px;}
+    #particle-field{opacity:.48;}
+  }
+  @media(prefers-reduced-motion:reduce){#particle-field{display:none}.back-top{transition:none}}
+
 </style>
 </head>
 <body>
-
+<div class="page-progress" aria-hidden="true"></div>
+<canvas id="particle-field" aria-hidden="true"></canvas>
 <nav>
   <div class="mark">ياسين<span> محمد</span></div>
   <ul>
@@ -378,6 +417,7 @@
 </section>
 
 <footer>© 2026 ياسين محمد — كل الحقوق محفوظة</footer>
+<a class="back-top" href="#" aria-label="العودة إلى أعلى الصفحة">↑</a>
 
 <script>
   const els = document.querySelectorAll('.reveal');
@@ -387,6 +427,111 @@
     });
   }, {threshold:0.15});
   els.forEach(el=>io.observe(el));
+
+  // A lightweight interactive particle field: cursor ripples + flowing wave.
+  (() => {
+    const canvas = document.getElementById('particle-field');
+    if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const ctx = canvas.getContext('2d', { alpha: true });
+    if (!ctx) return;
+    let w = 0, h = 0, dpr = 1, particles = [], frame = 0;
+    const pointer = { x: -1000, y: -1000, active: false, px: -1000, py: -1000 };
+    const colors = ['28,125,255', '255,51,82', '180,205,255'];
+    const makeParticles = () => {
+      const spacing = window.innerWidth < 650 ? 34 : 27;
+      particles = [];
+      for (let y = spacing * .5; y < h; y += spacing) {
+        for (let x = spacing * .5; x < w; x += spacing) {
+          if (Math.random() > .88) continue;
+          particles.push({ ox:x, oy:y, x, y, vx:0, vy:0, r:Math.random()*1.15+.35,
+            phase:Math.random()*Math.PI*2, color:colors[Math.random() < .57 ? 0 : (Math.random()<.5 ? 1 : 2)] });
+        }
+      }
+    };
+    const resize = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, 1.7);
+      w = window.innerWidth; h = window.innerHeight;
+      canvas.width = Math.floor(w*dpr); canvas.height = Math.floor(h*dpr);
+      canvas.style.width = w+'px'; canvas.style.height = h+'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0); makeParticles();
+    };
+    const move = (e) => {
+      pointer.px = pointer.x; pointer.py = pointer.y;
+      pointer.x = e.clientX; pointer.y = e.clientY; pointer.active = true;
+    };
+    window.addEventListener('pointermove', move, { passive:true });
+    window.addEventListener('pointerleave', () => { pointer.active = false; }, { passive:true });
+    window.addEventListener('resize', resize, { passive:true });
+    resize();
+    const draw = () => {
+      frame++;
+      ctx.clearRect(0,0,w,h);
+      const time = frame*.018;
+      for (let i=0; i<particles.length; i++) {
+        const p = particles[i];
+        const wave = Math.sin(p.ox*.009 + time + p.phase)*5 + Math.cos(p.oy*.008-time*.75)*4;
+        let tx = p.ox, ty = p.oy + wave;
+        if (pointer.active) {
+          const dx = p.x-pointer.x, dy = p.y-pointer.y;
+          const dist = Math.sqrt(dx*dx+dy*dy);
+          const radius = w < 650 ? 100 : 145;
+          if (dist < radius && dist > .01) {
+            const force = (1-dist/radius)*18;
+            tx += dx/dist*force; ty += dy/dist*force;
+            const ripple = Math.sin(dist*.075-time*2.2)*4*(1-dist/radius);
+            tx += dx/dist*ripple; ty += dy/dist*ripple;
+          }
+        }
+        p.vx += (tx-p.x)*.035; p.vy += (ty-p.y)*.035;
+        p.vx *= .88; p.vy *= .88; p.x += p.vx; p.y += p.vy;
+        const alpha = .18 + (Math.sin(time+p.phase)+1)*.19;
+        ctx.beginPath(); ctx.fillStyle = 'rgba('+p.color+','+alpha+')';
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      }
+      // Subtle connections appear only between nearby points, keeping the effect light.
+      if (w > 700) {
+        for (let i=0; i<particles.length; i+=2) {
+          const a = particles[i];
+          for (let j=i+1; j<Math.min(i+5,particles.length); j++) {
+            const b = particles[j], dx=a.x-b.x, dy=a.y-b.y, d=dx*dx+dy*dy;
+            if (d < 76*76) {
+              ctx.strokeStyle='rgba(90,145,255,'+(0.055*(1-Math.sqrt(d)/76))+')';
+              ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+            }
+          }
+        }
+      }
+      requestAnimationFrame(draw);
+    };
+    draw();
+  })();
+
+  // Scroll progress, compact navigation and quick return-to-top.
+  const progress = document.querySelector('.page-progress');
+  const nav = document.querySelector('nav');
+  const backTop = document.querySelector('.back-top');
+  const updateScrollUI = () => {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    progress.style.width = (max > 0 ? window.scrollY / max * 100 : 0) + '%';
+    nav.classList.toggle('scrolled', window.scrollY > 35);
+    backTop.classList.toggle('show', window.scrollY > 500);
+  };
+  window.addEventListener('scroll', updateScrollUI, { passive:true });
+  updateScrollUI();
+
+  // Gentle pointer tilt on cards (disabled on touch screens).
+  if (window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+    document.querySelectorAll('.channel-card').forEach(card => {
+      card.addEventListener('pointermove', e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX-r.left)/r.width-.5;
+        const y = (e.clientY-r.top)/r.height-.5;
+        card.style.transform = 'translateY(-6px) perspective(700px) rotateX('+(-y*3)+'deg) rotateY('+(x*3)+'deg)';
+      });
+      card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+    });
+  }
+
 </script>
 
 </body>
