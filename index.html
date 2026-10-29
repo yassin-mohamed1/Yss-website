@@ -408,7 +408,11 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
 
   /* ---------- cinematic 5-second intro overlay (site design remains untouched) ---------- */
   body.intro-lock{overflow:hidden}
-  .cinematic-intro{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;overflow:hidden;background:#020203;opacity:1;visibility:visible;transition:opacity .65s ease,visibility .65s ease}
+  .cinematic-intro{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;overflow:hidden;background:rgba(2,2,3,.12);opacity:1;visibility:visible;transition:opacity .65s ease,visibility .65s ease;pointer-events:none}
+  .cinematic-intro .intro-center,.cinematic-intro .intro-floater{display:none!important}
+  .cinematic-intro:before,.cinematic-intro:after{mix-blend-mode:screen}
+  .intro-grid{opacity:.55}
+  .intro-scan{opacity:.7}
   .cinematic-intro.is-leaving{opacity:0;visibility:hidden;pointer-events:none}
   .cinematic-intro:before,.cinematic-intro:after{content:"";position:absolute;width:70vmax;height:70vmax;border-radius:50%;filter:blur(90px);opacity:.28;pointer-events:none}
   .cinematic-intro:before{background:#0057c2;top:-40vmax;right:-15vmax;animation:introGlow 5s ease forwards}
@@ -930,10 +934,43 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
   (()=>{const section=document.querySelector('.scroll-story');if(!section||matchMedia('(prefers-reduced-motion: reduce)').matches)return;const panels=[...section.querySelectorAll('.story-panel')],num=document.getElementById('story-number'),hint=document.getElementById('story-hint'),fill=document.getElementById('story-track-fill');let active=-1,queued=false;function update(){queued=false;const rect=section.getBoundingClientRect(),span=section.offsetHeight-innerHeight,p=Math.max(0,Math.min(.9999,-rect.top/Math.max(1,span))),next=Math.min(panels.length-1,Math.floor(p*panels.length));if(next!==active){panels.forEach((el,i)=>el.classList.toggle('active',i===next));active=next;num.textContent=String(next+1).padStart(2,'0');hint.textContent=String(next+1).padStart(2,'0')+' / 0'+panels.length}fill.style.width=((p*panels.length)%1*100)+'%'}function scroll(){if(!queued){queued=true;requestAnimationFrame(update)}}addEventListener('scroll',scroll,{passive:true});addEventListener('resize',scroll,{passive:true});update()})();
 
 
-  // Five-second cinematic intro; the existing site UI is revealed unchanged afterward.
+  // Five-second assemble animation: real page elements fly into their exact existing positions.
   (() => {
     const intro = document.getElementById('cinematic-intro');
     if (!intro) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduced && Element.prototype.animate) {
+      const targets = [
+        document.querySelector('nav'),
+        ...document.querySelectorAll('nav ul a'),
+        document.querySelector('.hero-eyebrow'),
+        document.querySelector('.hero-en-primary'),
+        document.querySelector('.hero-ar-secondary'),
+        ...document.querySelectorAll('.hero .hero-actions a, .hero .hero-actions button, .hero a, .hero button'),
+        document.querySelector('.intro-audio-toggle'),
+        ...document.querySelectorAll('.hero .social-link, .hero .socials a, .hero .hero-links a')
+      ].filter(Boolean);
+      const unique = [...new Set(targets)].filter(el => {
+        const rect = el.getBoundingClientRect();
+        const style = getComputedStyle(el);
+        return rect.width > 0 && rect.height > 0 && style.display !== 'none' &&
+          rect.bottom > 0 && rect.top < innerHeight && rect.right > 0 && rect.left < innerWidth;
+      });
+      unique.forEach((el, i) => {
+        const rect = el.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = (innerWidth / 2 - cx) * (0.7 + Math.random() * 1.1) + (Math.random() - .5) * 180;
+        const dy = (innerHeight / 2 - cy) * (0.7 + Math.random() * 1.1) + (Math.random() - .5) * 160;
+        const spin = (Math.random() - .5) * 46;
+        const delay = Math.min(i * 65, 650);
+        el.animate([
+          { translate: dx + 'px ' + dy + 'px', rotate: spin + 'deg', scale: .45, opacity: 0, filter: 'blur(7px)' },
+          { translate: (dx * -.12) + 'px ' + (dy * -.12) + 'px', rotate: (spin * -.16) + 'deg', scale: 1.035, opacity: 1, filter: 'blur(0px)', offset: .78 },
+          { translate: '0px 0px', rotate: '0deg', scale: 1, opacity: 1, filter: 'blur(0px)' }
+        ], { duration: 1650 + Math.random() * 600, delay, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' });
+      });
+    }
     window.setTimeout(() => {
       intro.classList.add('is-leaving');
       document.body.classList.remove('intro-lock');
