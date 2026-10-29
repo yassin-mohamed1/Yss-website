@@ -46,17 +46,11 @@
   }
   nav .mark{font-family:'Noto Kufi Arabic'; font-weight:800; font-size:1.2rem;}
   nav .mark span{color:var(--blue-glow);}
-  nav ul{list-style:none; display:flex; gap:36px;}
-  nav ul a{
-    color:var(--ink-dim); text-decoration:none; font-size:0.92rem; font-weight:500;
-    transition:color .25s ease; position:relative;
-  }
-  nav ul a:hover{color:var(--ink);}
-  nav ul a::after{
-    content:''; position:absolute; right:0; bottom:-6px; width:0; height:2px;
-    background:var(--red-glow); transition:width .3s ease;
-  }
-  nav ul a:hover::after{width:100%;}
+  nav ul{list-style:none;display:flex;gap:10px;align-items:center}
+  nav ul a{display:inline-flex;align-items:center;justify-content:center;min-width:88px;padding:11px 18px;color:#c8cad4;text-decoration:none;font-size:.92rem;font-weight:700;position:relative;border:1px solid rgba(245,244,240,.11);border-radius:8px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.015));box-shadow:inset 0 1px 0 rgba(255,255,255,.045);transition:color .25s,border-color .25s,background .25s,box-shadow .25s}
+  nav ul a:before{content:"";position:absolute;inset:0;border-radius:inherit;opacity:0;background:linear-gradient(110deg,rgba(28,125,255,.17),rgba(255,51,82,.11));transition:opacity .25s}
+  nav ul a:hover{color:#fff;border-color:rgba(109,244,255,.45);box-shadow:0 8px 24px rgba(0,0,0,.22),0 0 18px rgba(28,125,255,.12)}
+  nav ul a:hover:before{opacity:1}
 
   /* ---------- hero ---------- */
   .hero{
@@ -199,9 +193,13 @@
   .contact h2{font-family:'Noto Kufi Arabic'; font-weight:800; font-size:clamp(2rem, 4.4vw, 3.2rem); max-width:760px; margin:0 auto 20px; position:relative; z-index:1;}
   .contact p{color:var(--ink-dim); max-width:540px; margin:0 auto 42px; position:relative; z-index:1;}
   .contact .btn{padding:18px 44px; font-size:1.05rem; position:relative; z-index:1;}
-  .contact-links{display:flex; gap:26px; justify-content:center; flex-wrap:wrap; margin-top:34px; position:relative; z-index:1;}
-  .contact-links a{color:var(--ink-dim); text-decoration:none; font-size:0.95rem; font-weight:500; padding:6px 2px; border-bottom:2px solid transparent; transition:.25s;}
-  .contact-links a:hover{color:#fff; border-color:var(--red-glow);}
+  .contact-links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:30px;position:relative;z-index:1}
+  .contact-links a{color:var(--ink);text-decoration:none;font-size:.95rem;font-weight:700;padding:15px 22px;border:1px solid rgba(245,244,240,.15);border-radius:10px;background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.02));display:inline-flex;align-items:center;gap:13px;min-width:175px;justify-content:space-between;transition:transform .25s,border-color .25s,box-shadow .25s}
+  .contact-links a:hover{color:#fff;transform:translateY(-4px);border-color:rgba(109,244,255,.5);box-shadow:0 14px 34px rgba(0,0,0,.3),0 0 22px rgba(28,125,255,.12)}
+  .contact-links .social-symbol{font-size:1.25rem;color:var(--blue-glow)}
+  .contact-links .whatsapp-link .social-symbol{color:#46e58a}
+  .contact-links .whatsapp-link:hover{border-color:rgba(70,229,138,.55)}
+  .contact-links a i{font-style:normal;color:#858da2}
 
   footer{
     padding:36px 6%; text-align:center; color:#57575e; font-size:0.85rem;
@@ -325,18 +323,33 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
 @media(hover:none),(pointer:coarse){.tilt-surface:before{display:none}}
 @media(prefers-reduced-motion:reduce){.tilt-surface,.pointer-text-depth{transform:none!important;transition:none!important}}
 
+
+  nav .mark{font-family:'Anton',sans-serif;direction:ltr;letter-spacing:2px;font-size:1.45rem;color:#f5f4f0;text-shadow:0 0 22px rgba(28,125,255,.3);transform:translateZ(18px)}
+  nav .mark span{color:var(--blue-glow)}
+  .hero-signature{display:flex;align-items:center;gap:14px;margin-top:35px;color:#737b91;font:10px 'Anton',sans-serif;letter-spacing:2.4px;direction:ltr;opacity:0;animation:riseIn .7s ease-out 1s forwards}
+  .hero-signature span{width:clamp(20px,5vw,64px);height:1px;background:linear-gradient(90deg,transparent,var(--blue-glow))}
+  .hero-signature span:last-child{background:linear-gradient(90deg,var(--red-glow),transparent)}
+  .hero-signature i{font-style:normal}
+  .hero-cta{display:none!important}
+  .hero-eyebrow{letter-spacing:3px;font:10px 'Anton',sans-serif;color:#8c95ad}
+  nav ul a,.contact-links a,.scene-links a{display:inline-flex;transform-style:preserve-3d;will-change:transform}
+  .whatsapp-card:after{background:#31d77b!important}
+  .whatsapp-card .icon-badge{border-color:rgba(49,215,123,.3);background:rgba(49,215,123,.08)}
+  .whatsapp-card .icon-badge svg{stroke:#43e58b}
+  .whatsapp-card:hover{border-color:rgba(49,215,123,.45);box-shadow:0 20px 45px rgba(0,0,0,.25),0 0 24px rgba(49,215,123,.08)}
+  @media(max-width:600px){nav ul{display:flex;gap:6px}nav ul a{min-width:0;padding:9px 11px;font-size:.8rem}.hero-signature{font-size:8px;letter-spacing:1.1px;gap:8px}.hero-signature span{width:15px}.contact-links a{min-width:145px;padding:13px 16px}}
+
 </style>
 </head>
 <body>
 <div class="page-progress" aria-hidden="true"></div>
 <canvas id="particle-field" aria-hidden="true"></canvas>
 <nav>
-  <div class="mark" aria-label="Yassin Mohamed">YM<span>®</span></div>
+  <div class="mark" aria-label="Yassin Mohamed">YASSIN<span>.</span></div>
   <ul>
     <li><a href="#about">عني</a></li>
     <li><a href="#work">شغلي</a></li>
     <li><a href="#channels">قنواتي</a></li>
-    <li><a href="#contact">تواصل</a></li>
   </ul>
 </nav>
 
@@ -344,15 +357,10 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
   <div class="orb orb-blue"></div>
   <div class="orb orb-red"></div>
   <div class="beam"></div>
-  <div class="hero-eyebrow">أهلاً، أنا</div>
+  <div class="hero-eyebrow">PERSONAL PROFILE</div>
   <h1 class="kufi">ياسين محمد</h1>
   <div class="en-name anton">YASSIN&nbsp;&nbsp;MOHAMED</div>
-  <p class="tag">أحوّل الأفكار إلى مشاريع رقمية حقيقية، من المواقع والتصميم والمحتوى إلى تجارب الألعاب والسيرفرات.</p>
-  <div class="hero-cta">
-    <a href="#channels" class="btn btn-solid">شوف قنواتي</a>
-    <a href="#contact" class="btn btn-outline">تواصل معايا</a>
-  </div>
-  <div class="scroll-mark"><i></i>انزل تحت</div>
+  <div class="hero-signature" aria-hidden="true"><span></span><i>CREATOR · DESIGN · TECHNOLOGY · GAMING</i><span></span></div>
 </header>
 
 <section class="scroll-story" id="story"><div class="story-pin"><div class="story-backdrop"></div>
@@ -482,23 +490,16 @@ nav ul a,.contact-links a,.scene-links a{display:inline-block;transform-style:pr
         <div class="icon-badge"><svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M20.3 5.3c-1.3-.6-2.7-1-4.1-1.2l-.2.4c-.5-.1-1.1-.1-1.6 0l-.2-.4c-1.4.2-2.8.6-4.1 1.2C7.6 8.2 6.9 11 7.1 13.8c1.5 1.1 3 1.8 4.4 2.2l.5-1c-.5-.2-1-.4-1.4-.7.1-.1.2-.2.3-.3 2.6 1.2 5.5 1.2 8.1 0l.3.3c-.4.3-.9.5-1.4.7l.5 1c1.4-.4 2.9-1.1 4.4-2.2.3-3.3-.6-6-2.5-8.5Z"/><circle cx="9.5" cy="11" r="1"/><circle cx="14.5" cy="11" r="1"/></svg></div>
         <div class="cname">Discord</div><div class="chandle">حسابي على ديسكورد</div>
       </a>
+      <a href="https://wa.me/201501094186" target="_blank" rel="noopener" class="channel-card whatsapp-card" aria-label="WhatsApp">
+        <div class="icon-badge"><svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M20.5 11.5a8.4 8.4 0 0 1-12.4 7.3L3 20l1.3-4.8A8.5 8.5 0 1 1 20.5 11.5Z"/><path d="M8.8 8.3c.3-.6.6-.6 1-.6.2 0 .4 0 .6.5l.8 1.8c.1.3.1.5-.1.7l-.6.7c-.2.2-.2.4 0 .7.5.9 1.2 1.6 2.1 2.1.3.2.5.2.7-.1l.8-.9c.2-.2.4-.2.7-.1l1.7.8c.3.1.5.3.5.5 0 .4-.2 1.1-.7 1.5-.5.5-1.2.7-2 .5-1-.2-2.3-.8-3.6-1.9-1.1-.9-2-2.1-2.4-3.2-.4-1-.1-1.9.5-2.5Z"/></svg></div>
+        <div class="cname">واتساب</div><div class="chandle">تواصل مباشر</div>
+      </a>
     </div>
   </div>
 </section>
 
 
-<section id="contact" class="contact">
-  <div class="orb orb-blue"></div>
-  <div class="orb orb-red"></div>
-  <h2 class="kufi">يلا نتكلم عن شغلك الجاي</h2>
-  <p>لو عندك فكرة أو مشروع أو عايز تتواصل معايا، ابعتلي على أي قناة من دول. سواء كان تعاون، مشروع، أو خدمة — أنا مستعد أسمعها.</p>
-  <a href="https://wa.me/201501094186" target="_blank" rel="noopener" class="btn btn-solid">ابعتلي واتساب</a>
-  <div class="contact-links">
-    <a href="https://www.tiktok.com/@yassin.mohamed.2009?_r=1&_t=ZS-99QFN5fQFd7" target="_blank" rel="noopener">تيك توك</a>
-    <a href="https://www.instagram.com/yassin.mohamed.2009?igsi=MndsM281NDltdWFq" target="_blank" rel="noopener">انستجرام</a>
-    <a href="https://discord.com/users/1230975716884086" target="_blank" rel="noopener">ديسكورد</a>
-  </div>
-</section>
+
 
 <footer>© 2026 ياسين محمد — كل الحقوق محفوظة</footer>
 <a class="back-top" href="#" aria-label="العودة إلى أعلى الصفحة">↑</a>
